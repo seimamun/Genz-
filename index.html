@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mining Game</title>
+</head>
+<body>
+    <h1>Welcome to the Mining Game</h1>
+    <div>
+        <h2>Register</h2>
+        <form id="register-form">
+            <input type="text" name="username" placeholder="Enter username" required>
+            <button type="submit">Register</button>
+        </form>
+        <p id="register-message"></p>
+    </div>
+
+    <div>
+        <h2>Mine Coins</h2>
+        <form id="mine-form">
+            <input type="text" name="username" placeholder="Enter username" required>
+            <button type="submit">Mine</button>
+        </form>
+        <p id="mine-message"></p>
+    </div>
+
+    <div>
+        <h2>Leaderboard</h2>
+        <button id="load-leaderboard">Show Leaderboard</button>
+        <ul id="leaderboard"></ul>
+    </div>
+
+    <script>
+        // Register User
+        document.getElementById('register-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const response = await fetch('/register', {
+                method: 'POST',
+                body: formData
+            });
+            const result = await response.json();
+            document.getElementById('register-message').textContent = result.message || result.error;
+        });
+
+        // Mine Coins
+        document.getElementById('mine-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const response = await fetch('/mine', {
+                method: 'POST',
+                body: formData
+            });
+            const result = await response.json();
+            document.getElementById('mine-message').textContent = result.message || result.error;
+        });
+
+        // Load Leaderboard
+        document.getElementById('load-leaderboard').addEventListener('click', async () => {
+            const response = await fetch('/leaderboard');
+            const result = await response.json();
+            const leaderboard = result.leaderboard;
+            const list = document.getElementById('leaderboard');
+            list.innerHTML = '';
+            leaderboard.forEach(([username, coins]) => {
+                const item = document.createElement('li');
+                item.textContent = `${username}: ${coins} coins`;
+                list.appendChild(item);
+            });
+        });
+    </script>
+</body>
+</html>
